@@ -24,6 +24,8 @@ const int NUM_MODES = 4;
 Mode mode;
 bool left_eye_on;
 uint8_t dim_iter;
+int buttonState = LOW;
+int oldButtonState = LOW;
 
 void setup()
 {
@@ -42,7 +44,10 @@ void loop()
 {
   poti = analogRead(POTI_PIN);
 
-  if(digitalRead(BUTTON_PIN))
+  oldButtonState = buttonState;
+  buttonState = digitalRead(BUTTON_PIN);
+
+  if(buttonState == HIGH && oldButtonState == LOW) // when the button is pressed
     mode = (Mode)(mode+1 % NUM_MODES);
 
   switch(mode)
