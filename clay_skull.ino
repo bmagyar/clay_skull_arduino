@@ -38,6 +38,8 @@ void setup()
   power = 255;
   speed = 1023;
   mode = MODE_DIM_POWER;
+
+  Serial.begin(9600);
 }
 
 void loop()
@@ -53,15 +55,18 @@ void loop()
   switch(mode)
   {
     case MODE_DIM_POWER:
+      Serial.println("Mode DIM POWER");
       power = poti/4; // 0-1023 to 0-255
       dim_iter = dim_iter+1 % power;
       analogWrite(LEFT_EYE_PIN, power);
       analogWrite(RIGHT_EYE_PIN, power);
       break;
     case MODE_DIM_SPEED:
+      Serial.println("Mode DIM SPEED");
       speed = poti;
       break;
     case MODE_ALTERNATE:
+      Serial.println("Mode ALTERNATE");
       if(left_eye_on)
       {
         analogWrite(LEFT_EYE_PIN, power);
@@ -77,11 +82,20 @@ void loop()
       break;
     break;
     case MODE_FIXED:
+      Serial.println("Mode FIXED");
       analogWrite(LEFT_EYE_PIN, power);
       analogWrite(RIGHT_EYE_PIN, power);
       power = poti/4; // 0-1023 to 0-255
       break;
+    default:
+      Serial.print("Mode unknown: ");
+      Serial.println(mode);
   }
 
+  Serial.print("Power: ");
+  Serial.print(power);
+  Serial.print(", speed: ");
+  Serial.println(speed);
+ 
   delay(20);
 }
