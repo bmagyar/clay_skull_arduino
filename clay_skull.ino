@@ -50,7 +50,7 @@ void loop()
   buttonState = digitalRead(BUTTON_PIN);
 
   if(buttonState == HIGH && oldButtonState == LOW) // when the button is pressed
-    mode = (Mode)(mode+1 % NUM_MODES);
+    mode = (Mode)((mode+1) % NUM_MODES);
 
   switch(mode)
   {
