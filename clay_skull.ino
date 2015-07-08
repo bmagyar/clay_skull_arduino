@@ -7,8 +7,12 @@
 
 const int poti_min = 39;
 const int poti_max = 625;
+const float poti_to_intensity = 255.0/(poti_max - poti_min);
 
-int power;
+const float iter_step_max = 10;
+const float poti_to_iter_step = iter_step_max/(poti_max - poti_min);
+
+uint8_t power;
 int speed;
 int poti;
 
@@ -56,14 +60,17 @@ void loop()
   {
     case MODE_DIM_POWER:
       Serial.println("Mode DIM POWER");
-      power = poti/4; // 0-1023 to 0-255
-      dim_iter = dim_iter+1 % power;
-      analogWrite(LEFT_EYE_PIN, power);
-      analogWrite(RIGHT_EYE_PIN, power);
+      power = poti*poti_to_intensity; // poti range to 0-255
+      dim_iter = (dim_iter+uint8_t(speed*poti_to_iter_step))% power;
+      analogWrite(LEFT_EYE_PIN, dim_iter);
+      analogWrite(RIGHT_EYE_PIN, dim_iter);
       break;
     case MODE_DIM_SPEED:
       Serial.println("Mode DIM SPEED");
       speed = poti;
+      dim_iter = (dim_iter+uint8_t(speed*poti_to_iter_step))% power;
+      analogWrite(LEFT_EYE_PIN, dim_iter);
+      analogWrite(RIGHT_EYE_PIN, dim_iter);
       break;
     case MODE_ALTERNATE:
       Serial.println("Mode ALTERNATE");
@@ -85,7 +92,7 @@ void loop()
       Serial.println("Mode FIXED");
       analogWrite(LEFT_EYE_PIN, power);
       analogWrite(RIGHT_EYE_PIN, power);
-      power = poti/4; // 0-1023 to 0-255
+      power = poti*poti_to_intensity; // poti range to 0-255
       break;
     default:
       Serial.print("Mode unknown: ");
